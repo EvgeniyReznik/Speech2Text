@@ -38,12 +38,15 @@ def Talk(text):
 
     speakSpeechFromText(text)
     
-    p = subprocess.Popen([os.path.join("C:/", "Program Files(x86)", "VideoLAN", "VLC", "vlc.exe"),os.path.join("C:/", "Users", "Evgeniy", "workspace", "Speech2TextEngine", "src", "ans.mp3")])
+    title = "desertRose"
+    p = subprocess.Popen(["C:/Program Files (x86)/VideoLAN/VLC/vlc.exe","\\C:\Users\Evgeniy\workspace\Speech2TextEngine\src\\" + title + '.mp3'])
     
-    winmm = windll.winmm
-    winmm.mciSendStringA('Open "ans.mp3" Type MPEGVideo Alias theMP3',0,0,0)
-    winmm.mciSendStringA('Play theMP3 Wait',0,0,0)
-    winmm.mciSendStringA("Close theMP3","",0,0)
+#     winmm = windll.winmm
+#     errorcode = winmm.mciSendStringA('Open "desertRose.mp3" Type MPEGVideo Alias theMP3',0,0,0)
+#     if errorcode:
+#         print errorcode
+#     winmm.mciSendStringA('Play theMP3 Wait',0,0,0)
+#     winmm.mciSendStringA("Close theMP3","",0,0)
     
     pass
 
@@ -136,7 +139,7 @@ def Processing():
 if __name__ == '__main__':
         
     print ('Hi, what do you want?')
-    Talk('Hi, what do you want?')
+    Talk('Hi, what do you want my dear friend?')
     Record()
     Convert()
     print ('Sending...')

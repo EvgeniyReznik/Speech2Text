@@ -101,6 +101,27 @@ def Send():
     os.remove('C:\Users\Егор\Desktop\Расширение\output.flac')
     return ANSWER
 
+def Processing():
+    global ANSWER
+    if ANSWER == 0:
+        return 0
+    elif 'chrome' in ANSWER.lower():
+        os.system('C:\Users\Егор\AppData\Local\Google\Chrome\Application\chrome.exe')
+
+    elif 'skype' in ANSWER.lower():
+        os.system('C:\Users\Егор\Downloads\SkypePortable\SkypePortable.exe')
+    
+    elif 'cd rom' in ANSWER.lower() or\
+        'cd-rom' in ANSWER.lower() or\
+        'open d' in ANSWER.lower() or\
+        'dvd' in ANSWER.lower() or\
+        'dvd-rom' in ANSWER.lower() or\
+        'dvd rom' in ANSWER.lower() or\
+        'cdrom' in ANSWER.lower() or\
+        'cd - rom' in ANSWER.lower():
+        winmm = windll.winmm
+        winmm.mciSendStringA("set cdaudio door open", "", 0,0)
+
 if __name__ == '__main__':
     print("hi i am alive")
 

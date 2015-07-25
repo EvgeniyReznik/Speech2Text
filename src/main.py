@@ -15,13 +15,14 @@ import subprocess
 import pyttsx
 import speech_recognition as sr
 from ctypes import *
+from win32con import NULL
 
 def Talk(text):
     
     engine = pyttsx.init()
     rate = engine.getProperty('rate')
     engine.setProperty('rate', rate-10)
-    engine.say('Hi, what do you want my dear friend?')
+    engine.say(text)
     engine.runAndWait()
     
     pass
@@ -70,21 +71,22 @@ def Convert():
     print "Done"
 
 def Send():
+    def callback(recognizer, audio):                          # this is called from the background thread
+        try:
+            print("You said " + recognizer.recognize(audio))  # received audio data, now need to recognize it
+        except LookupError:
+            print("Oops! Didn't catch that")
     r = sr.Recognizer()
-    with sr.WavFile("output.wav") as source:              # use "output.wav" as the audio source
-        audio = r.record(source)                        # extract audio data from the file
-    try:
-        list = r.recognize(audio,True)                  # generate a list of possible transcriptions
-        print("Possible transcriptions:")
-        for prediction in list:
-            print(" " + prediction["text"] + " (" + str(prediction["confidence"]*100) + "%)")
-    except LookupError:                                 # speech is unintelligible
-        print("Could not understand audio")
+    m = sr.Microphone()
+    with m as source: r.adjust_for_ambient_noise(source)      # we only need to calibrate once, before we start listening
+    stop_listening = r.listen_in_background(m, callback)
     
-    return list
+    for _ in range(50): time.sleep(0.1)                       # we're still listening even though the main thread is blocked - loop runs for about 5 seconds
+    stop_listening()                                          # call the stop function to stop the background thread
+    while True: time.sleep(0.1)                               # the background thread stops soon after we call the stop function
 
 def Processing():
-    global ANSWER
+    ANSWER = 0
     if ANSWER == 0:
         return 0
     elif 'chrome' in ANSWER.lower():
@@ -107,36 +109,14 @@ def Processing():
 if __name__ == '__main__':
         
     print ('Hi, what do you want?')
-    Talk('Hi, what do you want my dear friend?')
+    Talk('Hi, what do you want?')
+    
     Record()
 #     Convert()
     print ('Sending...')
     Send()
     print 'Done'
     Processing()
-    
-    while True:
-        ANSWER = None
-        #Talk('Done.')
-        print 'Do you want something else? (Your command\No)'
-        Talk('Do you want something else??')
-        Record()
-        Convert()
-        print 'Sending...'
-        Send()
-        print 'Done'
-    
-        #print ANSWER
-        if ANSWER == 0:
-            continue
-     
-        if ANSWER.lower()== 'no' or\
-            ANSWER.lower()== 'nope' or\
-            ANSWER.lower()== 'not' or\
-            ANSWER.lower()== 'nay':
-            break
-        else:
-            Processing()
     
     print 'Okay, bye'
     Talk('Okay, bye')

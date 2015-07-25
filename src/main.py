@@ -13,6 +13,7 @@ import win32api
 import win32con 
 import subprocess
 import pyttsx
+import speech_recognition as sr
 from ctypes import *
 
 def Talk(text):
@@ -69,26 +70,18 @@ def Convert():
     print "Done"
 
 def Send():
-    global ANSWER
-    url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-EN'
-    url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-US&maxresults=10&pfilter=0"
-    flac=open('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.flac',"rb").read()
-    header = {'Content-Type' : 'audio/x-flac; rate=16000'}
-    req = urllib2.Request(url, flac, header)
-    data = urllib2.urlopen(req)
-    a = data.read()
-    ANSWER = eval(a)
-    if ANSWER['status'] == 5:
-        print 'Sorry, I do not understand you.'
-        Talk('Sorry, I do not understand you.')
-        ANSWER = 0
-
-    else:
-        ANSWER = ANSWER['hypotheses'][0]['utterance']
-        print ANSWER
-    os.remove('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.wav')
-    os.remove('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.flac')
-    return ANSWER
+    r = sr.Recognizer()
+    with sr.WavFile("output.wav") as source:              # use "output.wav" as the audio source
+        audio = r.record(source)                        # extract audio data from the file
+    try:
+        list = r.recognize(audio,True)                  # generate a list of possible transcriptions
+        print("Possible transcriptions:")
+        for prediction in list:
+            print(" " + prediction["text"] + " (" + str(prediction["confidence"]*100) + "%)")
+    except LookupError:                                 # speech is unintelligible
+        print("Could not understand audio")
+    
+    return list
 
 def Processing():
     global ANSWER
@@ -116,7 +109,7 @@ if __name__ == '__main__':
     print ('Hi, what do you want?')
     Talk('Hi, what do you want my dear friend?')
     Record()
-    Convert()
+#     Convert()
     print ('Sending...')
     Send()
     print 'Done'

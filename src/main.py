@@ -77,7 +77,7 @@ def Record():
 
 def Convert():
     print "Converting"
-    os.system('C:\Users\Егор\Desktop\Расширение\TotalAudioConverter\AudioConverter.exe C:\Users\Егор\Desktop\Расширение\output.wav C:\Users\Егор\Desktop\Расширение\output.flac')
+    os.system('C:\Program Files (x86)\TotalAudioConverter\AudioConverter.exe C:\Program Files (x86)\TotalAudioConverter\output.wav C:\Program Files (x86)\TotalAudioConverter\output.flac')
     print "Done"
 
 def Send():
@@ -97,8 +97,8 @@ def Send():
     else:
         ANSWER = ANSWER['hypotheses'][0]['utterance']
         print ANSWER
-    os.remove('C:\Users\Егор\Desktop\Расширение\output.wav')
-    os.remove('C:\Users\Егор\Desktop\Расширение\output.flac')
+    os.remove('C:\Program Files (x86)\TotalAudioConverter\output.wav')
+    os.remove('C:\Program Files (x86)\TotalAudioConverter\output.flac')
     return ANSWER
 
 def Processing():
@@ -106,10 +106,10 @@ def Processing():
     if ANSWER == 0:
         return 0
     elif 'chrome' in ANSWER.lower():
-        os.system('C:\Users\Егор\AppData\Local\Google\Chrome\Application\chrome.exe')
+        os.system('C:\Program Files (x86)\Google\Chrome\Application\chrome.exe')
 
     elif 'skype' in ANSWER.lower():
-        os.system('C:\Users\Егор\Downloads\SkypePortable\SkypePortable.exe')
+        os.system('C:\Program Files (x86)\Skype\Phone\Skype.exe')
     
     elif 'cd rom' in ANSWER.lower() or\
         'cd-rom' in ANSWER.lower() or\
@@ -123,11 +123,39 @@ def Processing():
         winmm.mciSendStringA("set cdaudio door open", "", 0,0)
 
 if __name__ == '__main__':
-    print("hi i am alive")
-
-    winmm = windll.winmm
-    winmm.mciSendStringA('Open "ans.mp3" Type MPEGVideo Alias theMP3',0,0,0)
-    winmm.mciSendStringA('Play theMP3 Wait',0,0,0)
-    winmm.mciSendStringA("Close theMP3","",0,0)
-    print("Thats it folks!@")
+        
+    print ('Hi, what do you want?')
+    Talk('Hi, what do you want?')
+    Record()
+    Convert()
+    print ('Sending...')
+    Send()
+    print 'Done'
+    Processing()
+    
+    while True:
+        ANSWER = None
+        #Talk('Done.')
+        print 'Do you want something else? (Your command\No)'
+        Talk('Do you want something else??')
+        Record()
+        Convert()
+        print 'Sending...'
+        Send()
+        print 'Done'
+    
+        #print ANSWER
+        if ANSWER == 0:
+            continue
+     
+        if ANSWER.lower()== 'no' or\
+            ANSWER.lower()== 'nope' or\
+            ANSWER.lower()== 'not' or\
+            ANSWER.lower()== 'nay':
+            break
+        else:
+            Processing()
+    
+    print 'Okay, bye'
+    Talk('Okay, bye')
     pass

@@ -12,41 +12,16 @@ import httplib, sys, string
 import win32api 
 import win32con 
 import subprocess
+import pyttsx
 from ctypes import *
 
 def Talk(text):
- 
-    def downloadFile(url, fileName):
-        fp = open(fileName, "wb")
-        curl = pycurl.Curl()
-        curl.setopt(pycurl.URL, url)
-        curl.setopt(pycurl.WRITEDATA, fp)
-        curl.perform()
-        curl.close()
-        fp.close()
-
-    def getGoogleSpeechURL(phrase):
-        googleTranslateURL = "http://translate.google.com/translate_tts?tl=en&"
-        parameters = {'q': phrase}
-        data = urllib.urlencode(parameters)
-        googleTranslateURL = "%s%s" % (googleTranslateURL,data)
-        return googleTranslateURL
-
-    def speakSpeechFromText(phrase):
-        googleSpeechURL = getGoogleSpeechURL(phrase)
-        downloadFile(googleSpeechURL,"ans.mp3")
-
-    speakSpeechFromText(text)
     
-    title = "desertRose"
-    p = subprocess.Popen(["C:/Program Files (x86)/VideoLAN/VLC/vlc.exe","\\C:\Users\Evgeniy\workspace\Speech2TextEngine\src\\" + title + '.mp3'])
-    
-#     winmm = windll.winmm
-#     errorcode = winmm.mciSendStringA('Open "desertRose.mp3" Type MPEGVideo Alias theMP3',0,0,0)
-#     if errorcode:
-#         print errorcode
-#     winmm.mciSendStringA('Play theMP3 Wait',0,0,0)
-#     winmm.mciSendStringA("Close theMP3","",0,0)
+    engine = pyttsx.init()
+    rate = engine.getProperty('rate')
+    engine.setProperty('rate', rate-10)
+    engine.say('Hi, what do you want my dear friend?')
+    engine.runAndWait()
     
     pass
 

@@ -11,6 +11,7 @@ import urllib2, pycurl
 import httplib, sys, string
 import win32api 
 import win32con 
+import subprocess
 from ctypes import *
 
 def Talk(text):
@@ -36,6 +37,14 @@ def Talk(text):
         downloadFile(googleSpeechURL,"ans.mp3")
 
     speakSpeechFromText(text)
+    
+    p = subprocess.Popen([os.path.join("C:/", "Program Files(x86)", "VideoLAN", "VLC", "vlc.exe"),os.path.join("C:/", "Users", "Evgeniy", "workspace", "Speech2TextEngine", "src", "ans.mp3")])
+    
+    winmm = windll.winmm
+    winmm.mciSendStringA('Open "ans.mp3" Type MPEGVideo Alias theMP3',0,0,0)
+    winmm.mciSendStringA('Play theMP3 Wait',0,0,0)
+    winmm.mciSendStringA("Close theMP3","",0,0)
+    
     pass
 
 def Record():
@@ -77,13 +86,15 @@ def Record():
 
 def Convert():
     print "Converting"
-    os.system('C:\Program Files (x86)\TotalAudioConverter\AudioConverter.exe C:\Program Files (x86)\TotalAudioConverter\output.wav C:\Program Files (x86)\TotalAudioConverter\output.flac')
+    cmdline = 'C:\TotalAudioConverter\AudioConverter.exe C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.wav C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.flac'
+    os.system(cmdline)
     print "Done"
 
 def Send():
     global ANSWER
     url = 'https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-EN'
-    flac=open('output.flac',"rb").read()
+    url = "https://www.google.com/speech-api/v1/recognize?xjerr=1&client=chromium&lang=en-US&maxresults=10&pfilter=0"
+    flac=open('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.flac',"rb").read()
     header = {'Content-Type' : 'audio/x-flac; rate=16000'}
     req = urllib2.Request(url, flac, header)
     data = urllib2.urlopen(req)
@@ -97,8 +108,8 @@ def Send():
     else:
         ANSWER = ANSWER['hypotheses'][0]['utterance']
         print ANSWER
-    os.remove('C:\Program Files (x86)\TotalAudioConverter\output.wav')
-    os.remove('C:\Program Files (x86)\TotalAudioConverter\output.flac')
+    os.remove('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.wav')
+    os.remove('C:\Users\Evgeniy\workspace\Speech2TextEngine\src\output.flac')
     return ANSWER
 
 def Processing():

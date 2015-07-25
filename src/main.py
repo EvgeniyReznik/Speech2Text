@@ -29,7 +29,7 @@ def Talk(text):
 def Record():
     CHUNK = 1024
     FORMAT = pyaudio.paInt16
-    CHANNELS = 2
+    CHANNELS = 1
     RATE = 16000
     RECORD_SECONDS = 5
     WAVE_OUTPUT_FILENAME = "output.wav"
